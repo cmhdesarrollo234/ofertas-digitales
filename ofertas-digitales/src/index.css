@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans text-gray-800 bg-white;
+  }
+}
+
+@layer components {
+  /* Botón primario — Aceptar */
+  .btn-aceptar {
+    @apply bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-xl
+           text-lg transition-all duration-200 shadow-lg hover:shadow-xl
+           flex items-center justify-center gap-3 w-full;
+  }
+
+  /* Botón secundario — Agendar */
+  .btn-agendar {
+    @apply bg-navy hover:bg-navy-dark text-white font-bold py-4 px-8 rounded-xl
+           text-lg transition-all duration-200 shadow-lg hover:shadow-xl
+           flex items-center justify-center gap-3 w-full;
+  }
+
+  /* Botón terciario — Contactar */
+  .btn-contactar {
+    @apply border-2 border-navy text-navy hover:bg-azul-light font-semibold py-4 px-8 rounded-xl
+           text-lg transition-all duration-200
+           flex items-center justify-center gap-3 w-full;
+  }
+
+  /* Etiqueta de sección */
+  .seccion-label {
+    @apply text-xs font-bold uppercase tracking-widest text-azul mb-2;
+  }
+
+  /* Tarjeta de especificación */
+  .spec-card {
+    @apply bg-azul-light rounded-lg p-4 flex flex-col gap-1;
+  }
+}
+
+/* model-viewer: asegurar que ocupa todo su contenedor */
+model-viewer {
+  width: 100%;
+  height: 100%;
+  background-color: #f8fafc;
+  border-radius: 12px;
+}
+
+/* Animación de entrada sutil */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
