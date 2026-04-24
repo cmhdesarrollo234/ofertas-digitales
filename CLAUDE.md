@@ -1,5 +1,5 @@
 # Proyecto: Sistema de Ofertas Digitales Interactivas
-## CMH Automación — Andreu
+## CMH Automación / EMG Prensas — Andreu
 
 ---
 
@@ -9,44 +9,67 @@ personalizadas por cliente. Cada oferta tiene una URL única con token. Incluye 
 embebido, visor 3D (.glb), tabla de accesorios con lógica de negocio, soluciones de calidad,
 condiciones comerciales y acciones finales (aceptar / agendar Calendly / rechazar).
 
+Las ofertas de prensas se gestionan bajo la marca **EMG Prensas** (sucursal de CMH Automación).
+La comercial responsable es **Juliana Zapata Montoya** (comercial@emg-prensas.es).
+El director es **Maxime Courtin** (también gestiona algunas ofertas).
+
 ## Stack
 - **Frontend:** React + Vite + Tailwind CSS
 - **Routing:** React Router v6
 - **Backend:** Netlify Functions (serverless)
-- **Base de datos:** Supabase (PostgreSQL) — pendiente de configurar
+- **Base de datos:** Supabase (PostgreSQL) — ✅ CONFIGURADO
 - **Visor 3D:** @google/model-viewer
 - **Despliegue:** Netlify + GitHub
 
 ## URLs
-- **Demo actual:** https://kaleidoscopic-yeot-c67072.netlify.app/o/demo
+- **Demo local:** http://localhost:5174/o/demo
+- **Netlify (pendiente deploy estable):** https://kaleidoscopic-yeot-c67072.netlify.app/o/demo
 - **Panel admin:** https://kaleidoscopic-yeot-c67072.netlify.app/admin
-- **Repositorio:** GitHub (cuenta anterior informático — andcommar tiene acceso total)
+- **Repositorio GitHub:** https://github.com/cmhdesarrollo234/ofertas-digitales
 
 ## Cómo arrancar en local
 ```bash
 npm install
 npm run dev
-# Oferta demo:  http://localhost:5173/o/demo
-# Panel admin:  http://localhost:5173/admin
+# Oferta demo:  http://localhost:5174/o/demo
+# Panel admin:  http://localhost:5174/admin
+# NOTA: Las funciones /api/* solo funcionan en Netlify, no en local
 ```
 
-## Variables de entorno necesarias (ver .env.example)
+## Variables de entorno
+Configuradas en Netlify ✅ y pendientes de crear .env.local para desarrollo local:
 ```
-SUPABASE_URL
-SUPABASE_ANON_KEY
-SUPABASE_SERVICE_KEY
+SUPABASE_URL=https://fbyvdlnmdqgmmbmsarml.supabase.co
+SUPABASE_ANON_KEY=<ver Supabase dashboard>
+SUPABASE_SERVICE_KEY=<ver Supabase dashboard>
 ```
-Configurar en: Netlify → Site configuration → Environment variables
+
+## Datos de empresa configurados
+- **Empresa:** CMH Automación S.L. / EMG Prensas (pendiente decidir cuál va en las ofertas)
+- **Web:** https://cmhautomacion.com/
+- **Comercial principal:** Juliana Zapata Montoya
+  - Email EMG: comercial@emg-prensas.es
+  - Email CMH: juliana.zapata@cmhautomacion.com
+  - Teléfono: +34 601 740 643 (⚠️ los docs antiguos muestran 696 520 903 — confirmar)
+  - Calendly: pendiente
+- **Director:** Maxime Courtin
+- **Logo:** /public/logo.png ✅ (colocado por Andreu)
+
+## Colores corporativos (tailwind.config.js)
+```js
+navy:       '#1A3365'   // Azul CMH
+navy-dark:  '#0F2040'
+naranja:    '#8B7D3A'   // Dorado corporativo CMH
+```
 
 ## Estado actual del proyecto
 
 ### ✅ Completado
 - Plantilla completa de oferta interactiva (todos los componentes)
 - Navegación por secciones (NavBar sticky)
-- Encabezado personalizado por cliente
-- Descripción + especificaciones técnicas
-- Vídeo YouTube embebido (funciona con ID real)
-- Visor 3D model-viewer para .glb (funciona, pendiente optimizar peso del modelo)
+- Encabezado personalizado por cliente (sin filtro invert en logo)
+- Vídeo YouTube embebido (ID: UOP6Ip2okiw en demo)
+- Visor 3D conectado a /public/models/EJEjemploPRENSA3D.glb
 - Tabla de accesorios imprescindibles/opcionales con subtotales
 - Soluciones de calidad en cards con vídeo expandible
 - Resumen económico
@@ -54,49 +77,65 @@ Configurar en: Netlify → Site configuration → Environment variables
 - Acciones finales: Aceptar / Agendar (Calendly) / Contactar / Rechazar con formulario
 - Botón flotante de contacto
 - Panel de administración de 4 pasos para crear ofertas
-- Catálogo de productos en src/data/catalogo.js
+- Catálogo de productos en src/data/catalogo.js con datos CMH/EMG
 - Netlify Functions: get-oferta, crear-oferta, track-event
 - Rutas: /o/:token (oferta), /admin (panel), /o/demo (demo con mock data)
-- Desplegado en Netlify y funcionando
+- Supabase configurado: tablas ofertas + eventos_trazabilidad creadas ✅
+- Variables de entorno añadidas en Netlify ✅
+- GitHub conectado a Netlify ✅
+- package.json con react-router-dom, @supabase/supabase-js, vite
 
-### ⏳ Pendiente
-- Configurar Supabase (tabla ofertas + eventos_trazabilidad)
-  → SQL listo en supabase-setup.sql
-  → Pendiente decisión: cuenta personal nueva vs cuenta empresa CMH Automación
-- Añadir variables de entorno en Netlify (depende de Supabase)
+### ⏳ Pendiente inmediato
+- **Deploy Netlify estable** — fallo actual: "vite: Permission denied"
+  → Último fix aplicado: netlify.toml con `npm ci --include=dev && npx vite build`
+  → Pendiente confirmar que el deploy funciona
+- Crear .env.local en local para que las funciones funcionen en desarrollo
+- Confirmar teléfono correcto de Juliana (601 740 643 vs 696 520 903)
+- Confirmar marca en las ofertas: CMH Automación vs EMG Prensas
+- Añadir URL de Calendly de Juliana
+- Confirmar emails definitivos
+
+### ⏳ Contenido pendiente (requiere información de la empresa)
 - Poblar catálogo con productos reales (src/data/catalogo.js)
-- Añadir vídeos YouTube reales (IDs en catalogo.js)
-- Optimizar archivo .glb (actual ~47MB, objetivo <10MB)
-- Logo de empresa en /public/logo.png
-- Renombrar subdominio Netlify (actualmente: kaleidoscopic-yeot-c67072)
+- Añadir vídeos YouTube reales
+- Optimizar .glb (actual ~47MB, objetivo <10MB) — usar gltf.report o Blender
+- Foto de portada de cada producto (imagen_portada en mockOferta/catalogo)
+- Planos 2D por producto (planos_pdf_url) — decidir dónde alojarlos
+- Logo EMG Prensas si se usa esa marca
 
 ### 🔮 Fase 2 (futuro)
 - Dashboard de trazabilidad (quién abrió qué, cuándo, qué vio)
 - Historial de ofertas en el panel admin
 - Gestión de versiones de oferta
 - Envío de email automatizado desde el panel
+- Autenticación para /admin
+- Soporte multiidioma (francés/inglés para exportación)
 
 ## Estructura de ficheros clave
 ```
 src/
   data/
     catalogo.js      ← Productos, accesorios, soluciones, condiciones (EDITAR AQUÍ)
-    mockOferta.js    ← Datos demo (no tocar)
+    mockOferta.js    ← Datos demo (no tocar salvo para actualizar demo)
   pages/
     Admin.jsx        ← Panel interno para crear ofertas
     OfertaPage.jsx   ← Página de oferta del cliente (lee de Supabase por token)
-  components/        ← Componentes visuales (no tocar salvo para cambios de diseño)
-netlify/functions/
-  crear-oferta.js    ← Guarda oferta en Supabase, devuelve token
-  get-oferta.js      ← Lee oferta de Supabase por token
-  track-event.js     ← Registra eventos de comportamiento del cliente
-supabase-setup.sql   ← SQL para crear tablas en Supabase (ejecutar una vez)
+  components/        ← Componentes visuales
+netlify/
+  functions/
+    crear-oferta.js  ← Guarda oferta en Supabase, devuelve token
+    get-oferta.js    ← Lee oferta de Supabase por token
+    track-event.js   ← Registra eventos de comportamiento del cliente
+netlify.toml         ← Config build: npm ci --include=dev && npx vite build
+supabase-setup.sql   ← SQL ya ejecutado en Supabase ✅
+.env.local           ← Variables locales (NO commitear)
 ```
 
 ## Notas importantes
 - El modelo .glb actual pesa ~47MB. Necesita optimización antes de producción real.
-  Herramienta recomendada: https://gltf.report o Blender con exportación optimizada.
 - La ruta /admin no tiene autenticación en Fase 1. Mantener la URL discreta.
-- Los componentes visuales reciben datos por props: no necesitan modificarse
-  al cambiar la fuente de datos (mock → Supabase). Arquitectura desacoplada.
-- react-scroll fue eliminado en v2. No reinstalar.
+- Los componentes visuales reciben datos por props — arquitectura desacoplada.
+- react-scroll fue eliminado. No reinstalar.
+- node_modules está en OneDrive (riesgo de rendimiento — mover fuera si hay problemas).
+- Las funciones /api/* solo funcionan desplegadas en Netlify, no con npm run dev local.
+  Para desarrollo local con funciones usar: netlify dev (requiere Netlify CLI).
