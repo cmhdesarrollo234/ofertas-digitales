@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm ci --include=dev && npx vite build"
   publish = "dist"
   functions = "netlify/functions"
 
@@ -8,7 +8,6 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
-# Redirige todo al index.html para que React Router funcione
 [[redirects]]
   from = "/*"
   to = "/index.html"
