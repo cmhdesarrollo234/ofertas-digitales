@@ -20,10 +20,10 @@ export default function Encabezado({ oferta }) {
           <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
             <div className="flex items-center gap-4">
               {empresa.logo_path && (
-                <img src={empresa.logo_path} alt={empresa.nombre} className="h-12 w-auto object-contain" />
+                <img src={empresa.logo_path} alt={empresa.nombre_comercial} className="h-12 w-auto object-contain" />
               )}
               {!empresa.logo_path && (
-                <span className="text-white font-bold text-xl">{empresa.nombre}</span>
+                <span className="text-white font-bold text-xl">{empresa.nombre_comercial}</span>
               )}
             </div>
             <div className="text-right">

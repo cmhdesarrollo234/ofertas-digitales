@@ -23,7 +23,7 @@ El director es **Maxime Courtin** (también gestiona algunas ofertas).
 
 ## URLs
 - **Demo local:** http://localhost:5174/o/demo
-- **Netlify (pendiente deploy estable):** https://kaleidoscopic-yeot-c67072.netlify.app/o/demo
+- **Netlify:** https://kaleidoscopic-yeot-c67072.netlify.app/o/demo
 - **Panel admin:** https://kaleidoscopic-yeot-c67072.netlify.app/admin
 - **Repositorio GitHub:** https://github.com/cmhdesarrollo234/ofertas-digitales
 
@@ -45,21 +45,24 @@ SUPABASE_SERVICE_KEY=<ver Supabase dashboard / Netlify env vars>
 ```
 
 ## Datos de empresa configurados
-- **Empresa:** CMH Automación S.L. / EMG Prensas (pendiente decidir cuál va en las ofertas)
+- **Marca comercial (visible al cliente):** EMG Prensas
+- **Razón social (legal/footer):** CMH Automación S.L.
 - **Web:** https://cmhautomacion.com/
 - **Comercial principal:** Juliana Zapata Montoya
   - Email EMG: comercial@emg-prensas.es
   - Email CMH: juliana.zapata@cmhautomacion.com
-  - Teléfono: +34 601 740 643 (⚠️ los docs antiguos muestran 696 520 903 — confirmar)
+  - Teléfono / WhatsApp Business: +34 964 18 35 75 ✅ (fijo con WhatsApp Business activo)
   - Calendly: pendiente
 - **Director:** Maxime Courtin
 - **Logo:** /public/logo.png ✅ (colocado por Andreu)
 
 ## Colores corporativos (tailwind.config.js)
 ```js
-navy:       '#1A3365'   // Azul CMH
-navy-dark:  '#0F2040'
-naranja:    '#8B7D3A'   // Dorado corporativo CMH
+navy:          '#1A3365'   // Azul CMH (secundario corporativo)
+navy-dark:     '#0F2040'
+naranja:       '#E85A1F'   // Naranja EMG Prensas (principal)
+naranja-dark:  '#B83F0E'   // Hover y acentos
+naranja-light: '#FFE4D2'   // Fondos suaves, badges
 ```
 
 ## Estado actual del proyecto
@@ -83,17 +86,16 @@ naranja:    '#8B7D3A'   // Dorado corporativo CMH
 - Supabase configurado: tablas ofertas + eventos_trazabilidad creadas ✅
 - Variables de entorno añadidas en Netlify ✅
 - GitHub conectado a Netlify ✅
-- package.json con react-router-dom, @supabase/supabase-js, vite
+- Deploy Netlify estable ✅
+- Marca comercial confirmada: EMG Prensas (visible al cliente) / CMH Automación S.L. (razón social) ✅
+- Teléfono confirmado: +34 964 18 35 75 (fijo con WhatsApp Business) ✅
+- Paleta naranja EMG actualizada en tailwind.config.js ✅
 
 ### ⏳ Pendiente inmediato
-- **Deploy Netlify estable** — fallo actual: "vite: Permission denied"
-  → Último fix aplicado: netlify.toml con `npm ci --include=dev && npx vite build`
-  → Pendiente confirmar que el deploy funciona
 - Crear .env.local en local para que las funciones funcionen en desarrollo
-- Confirmar teléfono correcto de Juliana (601 740 643 vs 696 520 903)
-- Confirmar marca en las ofertas: CMH Automación vs EMG Prensas
 - Añadir URL de Calendly de Juliana
 - Confirmar emails definitivos
+- Logo EMG Prensas si difiere del actual /logo.png
 
 ### ⏳ Contenido pendiente (requiere información de la empresa)
 - Poblar catálogo con productos reales (src/data/catalogo.js)
@@ -139,3 +141,5 @@ supabase-setup.sql   ← SQL ya ejecutado en Supabase ✅
 - node_modules está en OneDrive (riesgo de rendimiento — mover fuera si hay problemas).
 - Las funciones /api/* solo funcionan desplegadas en Netlify, no con npm run dev local.
   Para desarrollo local con funciones usar: netlify dev (requiere Netlify CLI).
+- El catálogo objetivo es de hasta ~80 prensas con 10-15 opciones de accesorios cada una.
+- Solo idioma español; sin i18n previsto.

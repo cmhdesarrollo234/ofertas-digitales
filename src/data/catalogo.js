@@ -159,7 +159,8 @@ export const CONDICIONES_PLANTILLAS = [
 
 // Datos de la empresa (comunes a todas las ofertas)
 export const EMPRESA = {
-  nombre: "CMH Automación S.L.",
+  nombre_comercial: "EMG Prensas",        // visible al cliente
+  razon_social:     "CMH Automación S.L.", // legal, footer/condiciones
   web: "https://cmhautomacion.com/",
   logo_path: "/logo.png",
 }
@@ -171,8 +172,8 @@ export const COMERCIAL = {
   cargo: "Comercial",
   email: "comercial@emg-prensas.es",
   email_cmh: "juliana.zapata@cmhautomacion.com",
-  telefono: "+34 601 740 643",
-  whatsapp: "+34 601 740 643",
+  telefono: "+34 964 18 35 75",
+  whatsapp: "+34 964 18 35 75",  // fijo con WhatsApp Business activo
   calendly_url: "",   // ← añadir cuando esté disponible
 }
 
@@ -181,7 +182,7 @@ export const COMERCIAL_DIRECCION = {
   nombre: "Maxime Courtin",
   cargo: "Director",
   email: "comercial@emg-prensas.es",     // ← confirmar si tiene email propio
-  telefono: "+34 601 740 643",
-  whatsapp: "+34 601 740 643",
+  telefono: "+34 964 18 35 75",
+  whatsapp: "+34 964 18 35 75",  // fijo con WhatsApp Business activo
   calendly_url: "",
 }

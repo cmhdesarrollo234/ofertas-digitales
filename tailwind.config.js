@@ -11,7 +11,9 @@ export default {
         'navy-dark': '#0F2040',
         azul:   '#1A3365',
         'azul-light': '#D0D8EA',
-        naranja: '#8B7D3A',
+        naranja: '#E85A1F',
+        'naranja-dark': '#B83F0E',
+        'naranja-light': '#FFE4D2',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

@@ -169,14 +169,15 @@ export const mockOferta = {
     nombre:       "Juliana Zapata Montoya",
     cargo:        "Comercial",
     email:        "comercial@emg-prensas.es",
-    telefono:     "+34 601 740 643",
-    whatsapp:     "+34 601 740 643",
+    telefono:     "+34 964 18 35 75",
+    whatsapp:     "+34 964 18 35 75",  // fijo con WhatsApp Business activo
     calendly_url: "https://calendly.com/demo",   // ← añadir cuando esté disponible
   },
 
   // ── Identidad de la empresa ─────────────────────────────────────────────
   empresa: {
-    nombre:     "CMH Automación S.L.",
+    nombre_comercial: "EMG Prensas",        // visible al cliente
+    razon_social:     "CMH Automación S.L.", // legal, footer/condiciones
     web:        "https://cmhautomacion.com/",
     logo_path:  "/logo.png",
   },
