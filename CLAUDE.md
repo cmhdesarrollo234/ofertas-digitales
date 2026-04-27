@@ -39,9 +39,9 @@ npm run dev
 ## Variables de entorno
 Configuradas en Netlify ✅ y pendientes de crear .env.local para desarrollo local:
 ```
-SUPABASE_URL=https://fbyvdlnmdqgmmbmsarml.supabase.co
-SUPABASE_ANON_KEY=<ver Supabase dashboard>
-SUPABASE_SERVICE_KEY=<ver Supabase dashboard>
+SUPABASE_URL=<ver Supabase dashboard / Netlify env vars>
+SUPABASE_ANON_KEY=<ver Supabase dashboard / Netlify env vars>
+SUPABASE_SERVICE_KEY=<ver Supabase dashboard / Netlify env vars>
 ```
 
 ## Datos de empresa configurados
