@@ -37,11 +37,13 @@ npm run dev
 ```
 
 ## Variables de entorno
-Configuradas en Netlify ✅ y pendientes de crear .env.local para desarrollo local:
+Configuradas en Netlify ✅ con las claves del nuevo formato Supabase (publishable / secret).
+Las legacy JWT keys (anon / service_role) están deshabilitadas.
+.env.local es opcional, solo necesario si se quiere usar `netlify dev` en local.
 ```
 SUPABASE_URL=<ver Supabase dashboard / Netlify env vars>
-SUPABASE_ANON_KEY=<ver Supabase dashboard / Netlify env vars>
-SUPABASE_SERVICE_KEY=<ver Supabase dashboard / Netlify env vars>
+SUPABASE_ANON_KEY=<sb_publishable_... — ver Supabase dashboard / Netlify env vars>
+SUPABASE_SERVICE_KEY=<sb_secret_... — ver Supabase dashboard / Netlify env vars>
 ```
 
 ## Datos de empresa configurados
@@ -90,12 +92,16 @@ naranja-light: '#FFE4D2'   // Fondos suaves, badges
 - Marca comercial confirmada: EMG Prensas (visible al cliente) / CMH Automación S.L. (razón social) ✅
 - Teléfono confirmado: +34 964 18 35 75 (fijo con WhatsApp Business) ✅
 - Paleta naranja EMG actualizada en tailwind.config.js ✅
+- Bundler de Netlify Functions configurado a esbuild (necesario por "type": "module" en package.json) ✅
+- Claves Supabase rotadas al nuevo formato publishable / secret; legacy JWT keys deshabilitadas ✅
+- **Flujo end-to-end probado en producción**: crear oferta en /admin → guardar en Supabase → abrir /o/<token> con datos personalizados ✅
+- Trazabilidad de eventos funcionando (tabla eventos_trazabilidad recibiendo registros) ✅
 
 ### ⏳ Pendiente inmediato
-- Crear .env.local en local para que las funciones funcionen en desarrollo
-- Añadir URL de Calendly de Juliana
+- Añadir URL de Calendly de Juliana (la creará ella)
 - Confirmar emails definitivos
 - Logo EMG Prensas si difiere del actual /logo.png
+- (Opcional) Crear .env.local + usar netlify dev para iterar funciones en local; mientras tanto se prueba directamente en el deploy de Netlify
 
 ### ⏳ Contenido pendiente (requiere información de la empresa)
 - Poblar catálogo con productos reales (src/data/catalogo.js)
@@ -128,9 +134,9 @@ netlify/
     crear-oferta.js  ← Guarda oferta en Supabase, devuelve token
     get-oferta.js    ← Lee oferta de Supabase por token
     track-event.js   ← Registra eventos de comportamiento del cliente
-netlify.toml         ← Config build: npm ci --include=dev && npx vite build
+netlify.toml         ← Config build (npm install + npm run build) y bundler esbuild para funciones
 supabase-setup.sql   ← SQL ya ejecutado en Supabase ✅
-.env.local           ← Variables locales (NO commitear)
+.env.local           ← Variables locales (NO commitear, opcional para netlify dev)
 ```
 
 ## Notas importantes
@@ -141,5 +147,8 @@ supabase-setup.sql   ← SQL ya ejecutado en Supabase ✅
 - node_modules está en OneDrive (riesgo de rendimiento — mover fuera si hay problemas).
 - Las funciones /api/* solo funcionan desplegadas en Netlify, no con npm run dev local.
   Para desarrollo local con funciones usar: netlify dev (requiere Netlify CLI).
+- **Importante para Netlify Functions**: como package.json tiene "type": "module", es OBLIGATORIO
+  mantener `[functions] node_bundler = "esbuild"` en netlify.toml. Sin esa línea las funciones
+  fallan con "module is not defined in ES module scope".
 - El catálogo objetivo es de hasta ~80 prensas con 10-15 opciones de accesorios cada una.
 - Solo idioma español; sin i18n previsto.
