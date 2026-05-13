@@ -7,13 +7,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        navy:   '#1A3365',
-        'navy-dark': '#0F2040',
-        azul:   '#1A3365',
-        'azul-light': '#D0D8EA',
-        naranja: '#E85A1F',
-        'naranja-dark': '#B83F0E',
-        'naranja-light': '#FFE4D2',
+        // Principal: gris grafito (variables conservan nombre "navy"/"azul" por compatibilidad)
+        navy:         '#1F2937',
+        'navy-dark':  '#111827',
+        azul:         '#1F2937',
+        'azul-light': '#F3F4F6',
+        // Secundario: rojo EMG (variables conservan nombre "naranja" por compatibilidad)
+        naranja:        '#C8202C',
+        'naranja-dark': '#9B1923',
+        'naranja-light':'#FCE4E6',
+        // Acento plateado/metálico
+        plata:        '#9CA3AF',
+        'plata-light':'#D1D5DB',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

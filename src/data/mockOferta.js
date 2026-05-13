@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// DATOS DE PRUEBA — Oferta Comercial Prensa Mecánica
-// Reemplazar por datos reales cuando estén disponibles.
+// DATOS DE PRUEBA — Oferta Comercial Prensa Manual de Cremallera EMG 2HR
+// Datos extraídos de la oferta original 2HR (ver docs/referencia-oferta-original/)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const mockOferta = {
@@ -8,7 +8,7 @@ export const mockOferta = {
   id:               "DEMO-001",
   numero_oferta:    "2026-001-A",
   fecha_creacion:   "15 de marzo de 2026",
-  fecha_expiracion: "14 de abril de 2026",
+  fecha_expiracion: "15 de junio de 2026",   // 3 meses según oferta original
   estado:           "enviada",
 
   // ── Cliente ────────────────────────────────────────────────────────────
@@ -20,148 +20,111 @@ export const mockOferta = {
 
   // ── Producto ───────────────────────────────────────────────────────────
   producto: {
-    nombre:             "Prensa Mecánica Excéntrica PMS-200T",
-    codigo_referencia:  "PMS-200T",
+    nombre:             "Prensa Manual de Cremallera EMG 2HR",
+    codigo_referencia:  "2HR",
     descripcion_corta:
-      "Prensa de alta precisión diseñada para operaciones de estampado, embutición y punzonado en producción continua de media y alta cadencia.",
+      "Prensa manual de cremallera con potencia de 200 Kg en toda la carrera. " +
+      "Corredera bloqueada en rotación y guiada en acero sobre hierro fundido, con retorno " +
+      "automático por resorte. Cabezal guiado sobre el bastidor y corredera alineada con el " +
+      "eje de la mesa. Ajuste de altura libre por desplazamiento manual del cabezal y tope " +
+      "mecánico para garantizar la repetibilidad del ciclo. Base y cabezal en hierro fundido " +
+      "para máxima resistencia y rigidez.",
 
-    // 👇 Sustituir por el ID real del vídeo de YouTube
-    // Ejemplo: si la URL es https://www.youtube.com/watch?v=ABC123xyz, el ID es ABC123xyz
+    // 👇 Placeholder — sustituir por el vídeo del 2HR cuando exista
     video_youtube_id: "UOP6Ip2okiw",
 
-    // 👇 Sustituir por la ruta al archivo .glb una vez disponible
-    // En desarrollo: colocar el archivo en /public/models/ y poner aquí "/models/nombre.glb"
+    // 👇 Placeholder — sustituir por el .glb del 2HR cuando se exporte de CAD
     modelo_glb_path: "/models/EJEjemploPRENSA3D.glb",
 
-    // 👇 Sustituir por la URL de la imagen de portada del producto
-    imagen_portada: null,
+    // 👇 Foto extraída de la oferta original 2HR
+    imagen_portada: "/images/2HR-foto.png",
 
-    // 👇 Enlace al PDF de planos (puede ser una URL de Google Drive, servidor, etc.)
-    planos_pdf_url: null,
+    // 👇 Plano técnico (PNG por ahora; sustituir por PDF oficial cuando esté disponible)
+    planos_pdf_url: "/images/2HR-plano.png",
 
     especificaciones: [
-      { label: "Tonelaje nominal",      value: "200 T" },
-      { label: "Potencia del motor",    value: "22 kW" },
-      { label: "Ciclos por minuto",     value: "40 – 80 cpm" },
-      { label: "Carrera del émbolo",    value: "160 mm" },
-      { label: "Superficie de mesa",    value: "900 × 600 mm" },
-      { label: "Paso entre guías",      value: "460 mm" },
-      { label: "Altura de trabajo",     value: "280 mm" },
-      { label: "Peso aproximado",       value: "8.500 kg" },
+      { label: "Potencia",                value: "200 Kg en toda la carrera" },
+      { label: "Carrera ajustable",       value: "0 a 50 mm (19 mm para 90°)" },
+      { label: "Cuello de cisne",         value: "72 mm de profundidad" },
+      { label: "Altura libre",            value: "54 a 200 mm" },
+      { label: "Mesa",                    value: "100 × 70 mm con 4 taladros M6" },
+      { label: "Agujero corredera",       value: "Ø 10 H7 × 24 mm" },
+      { label: "Eje de la mesa",          value: "Ø 14 H7" },
+      { label: "Pintura bastidor",        value: "RAL 5015 Azul claro" },
+      { label: "Pintura cabezal",         value: "RAL 7036 Gris platino" },
+      { label: "Material base y cabezal", value: "Hierro fundido" },
+      { label: "Peso",                    value: "8 Kg" },
     ],
 
     aplicaciones: [
-      "Estampado en frío",
-      "Embutición profunda",
-      "Punzonado y corte",
-      "Doblado y conformado",
-      "Acuñado y calibrado",
+      "Inserción de casquillos y rodamientos",
+      "Marcado y acuñado de piezas pequeñas",
+      "Operaciones de prensado manual de baja serie",
+      "Trabajos de banco en taller y mantenimiento",
+      "Pruebas y prototipado",
     ],
   },
 
   // ── Accesorios imprescindibles (siempre incluidos en la oferta) ─────────
-  accesorios_imprescindibles: [
-    {
-      codigo:      "ACC-101",
-      nombre:      "Sistema de mando bimanual",
-      descripcion: "Control de seguridad con doble accionamiento simultáneo. Certificado CE Cat. 4 / PLe.",
-      precio:      1_200,
-    },
-    {
-      codigo:      "ACC-102",
-      nombre:      "Protección delantera AISI 304",
-      descripcion: "Pantalla de protección delantera en acero inoxidable con apertura telescópica.",
-      precio:      850,
-    },
-    {
-      codigo:      "ACC-103",
-      nombre:      "Lubricación automática centralizada",
-      descripcion: "Sistema de lubricación automática para todos los puntos críticos del mecanismo.",
-      precio:      980,
-    },
-    {
-      codigo:      "ACC-104",
-      nombre:      "Cuadro eléctrico con PLC Siemens",
-      descripcion: "Cuadro eléctrico principal con PLC S7-1200 y pantalla táctil HMI de 7\".",
-      precio:      3_400,
-    },
-  ],
+  // La prensa 2HR estándar no incluye accesorios imprescindibles adicionales.
+  accesorios_imprescindibles: [],
 
   // ── Accesorios opcionales ───────────────────────────────────────────────
   accesorios_opcionales: [
     {
-      codigo:      "ACC-201",
-      nombre:      "Alimentador automático de banda",
-      descripcion: "Alimentador neumático de paso regulable para procesado continuo de chapa en bobina.",
-      precio:      4_500,
-    },
-    {
-      codigo:      "ACC-202",
-      nombre:      "Contador de golpes con preset",
-      descripcion: "Contador digital programable con función de parada automática al alcanzar el preset.",
-      precio:      380,
-    },
-    {
-      codigo:      "ACC-203",
-      nombre:      "Detector electrónico de fallos en matriz",
-      descripcion: "Sistema de detección de pieza incorrecta o fallo de expulsión. Parada de emergencia automática.",
-      precio:      1_200,
-    },
-    {
-      codigo:      "ACC-204",
-      nombre:      "Mesa de rodillos de entrada/salida",
-      descripcion: "Extensión de mesa con rodillos de bola para soporte de materiales largos o pesados.",
-      precio:      650,
-    },
-    {
-      codigo:      "ACC-205",
-      nombre:      "Eyector neumático de piezas",
-      descripcion: "Sistema de expulsión neumática de piezas hacia cinta transportadora o contenedor.",
-      precio:      720,
+      codigo:      "OPT-AMB",
+      nombre:      "Tratamiento ambiente limpio",
+      descripcion:
+        "Cincado en piezas de acero y niquelado en piezas de fundición. " +
+        "Indicado para entornos con exigencia de limpieza (alimentación, farma, salas blancas).",
+      precio:      1_190,
     },
   ],
 
-  // ── Soluciones de calidad ───────────────────────────────────────────────
+  // ── Soluciones de calidad (Soluciones de Control) ───────────────────────
   soluciones_calidad: [
     {
-      nombre:      "Control de Paralelismo por Láser",
+      nombre:      "Solución 1 · Fuerza + umbrales mín/máx",
       descripcion:
-        "Sistema de medición y control de paralelismo del émbolo mediante sensores láser de alta precisión. " +
-        "Garantiza tolerancias de ±0,01 mm en producciones de alta exigencia. " +
-        "Datos exportables en tiempo real a sistema MES o SCADA.",
-      precio:      3_200,
+        "Evalúa la fuerza de prensado de forma instantánea o fijando previamente un esfuerzo " +
+        "mínimo y máximo. Una carita sonriente verde/roja, un gráfico de barras y un zumbador " +
+        "indican que el ciclo se está realizando correctamente. Registra valores máximos.",
+      precio:      2_980,
       video_youtube_id: null,
     },
     {
-      nombre:      "Monitorización de Fuerza en Tiempo Real",
+      nombre:      "Solución 2 · Fuerza + desplazamiento + umbrales",
       descripcion:
-        "Célula de carga integrada en la bancada con display táctil para visualización y registro de la fuerza " +
-        "real aplicada en cada golpe. Generación automática de histórico exportable a Excel o PDF. " +
-        "Ideal para trazabilidad de proceso en sector automotriz.",
-      precio:      2_800,
+        "Evalúa fuerza y desplazamiento de forma instantánea o ajustando previamente fuerza " +
+        "y recorrido mínimos y máximos. Carita sonriente verde/roja, gráfico de barras y " +
+        "zumbador indican el resultado del ciclo. Registra valores máximos.",
+      precio:      4_180,
       video_youtube_id: null,
     },
     {
-      nombre:      "Sistema de Visión Artificial",
+      nombre:      "Solución 3 · Fuerza + desplazamiento + curvas",
       descripcion:
-        "Cámara industrial con software de visión artificial para detección de defectos en piezas al 100%. " +
-        "Conectado al PLC para rechazo automático de piezas no conformes. " +
-        "Reduce rechazos en cliente final y elimina inspección manual.",
-      precio:      6_500,
+        "Evalúa fuerza y desplazamiento estableciendo umbrales, horquillas o curvas envolventes. " +
+        "La curva de evaluación se visualiza al instante en pantalla. Carita sonriente verde/roja " +
+        "y zumbador indican que el ciclo se realiza correctamente. Disponible desde 09/2026.",
+      precio:      4_780,
       video_youtube_id: null,
     },
   ],
 
   // ── Condiciones comerciales ─────────────────────────────────────────────
   condiciones: {
-    validez_dias:          30,
-    portes:                "Porte pagado hasta planta cliente en Península Ibérica. Islas y exportación bajo consulta.",
-    plazo_entrega_semanas: 16,
-    garantia_meses:        24,
-    condiciones_pago:      "40% con confirmación de pedido · 60% contra entrega en fábrica.",
+    validez_dias:          90,    // 3 meses (oferta original)
+    portes:                "70 € sin IVA. Tiempo de tránsito según destino.",
+    plazo_entrega_semanas: 2,     // ~10 días naturales según oferta original
+    garantia_meses:        12,    // 1 año, piezas y mano de obra
+    condiciones_pago:
+      "Primera operación: contado. Siguientes pedidos: 30 % con la firma del pedido y resto " +
+      "según condiciones pactadas (sujeto a cobertura por nuestra compañía CECSE).",
     notas:
-      "Precios expresados en euros, sin IVA. La configuración final puede variar en función de la visita técnica previa. " +
-      "Esta oferta no incluye obra civil, instalación eléctrica de planta ni utillajes.",
+      "Precios unitarios, impuestos no incluidos. La configuración final puede variar en " +
+      "función de la visita técnica previa. Esta oferta cubre la prensa estándar 2HR sin " +
+      "opciones; tratamientos especiales y soluciones de control se cotizan adicionalmente.",
   },
 
   // ── Datos del comercial responsable ────────────────────────────────────
@@ -170,15 +133,17 @@ export const mockOferta = {
     cargo:        "Comercial",
     email:        "comercial@emg-prensas.es",
     telefono:     "+34 964 18 35 75",
-    whatsapp:     "+34 964 18 35 75",  // fijo con WhatsApp Business activo
-    calendly_url: "https://calendly.com/demo",   // ← añadir cuando esté disponible
+    whatsapp:     "+34 964 18 35 75",
+    calendly_url: "https://calendly.com/demo",
   },
 
   // ── Identidad de la empresa ─────────────────────────────────────────────
   empresa: {
-    nombre_comercial: "EMG Prensas",        // visible al cliente
-    razon_social:     "CMH Automación S.L.", // legal, footer/condiciones
+    nombre_comercial: "EMG Prensas",
+    razon_social:     "CMH Automación S.L.",
     web:        "https://cmhautomacion.com/",
-    logo_path:  "/logo.png",
+    logo_path:    "/logo-emg-claro.png",   // default, fondos claros
+    logo_claro:   "/logo-emg-claro.png",   // EMG en negro, para fondos blancos/claros
+    logo_oscuro:  "/logo-emg-oscuro.png",  // EMG en blanco, para fondos oscuros (NavBar, hero)
   },
 }

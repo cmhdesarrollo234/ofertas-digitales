@@ -19,10 +19,13 @@ export default function Encabezado({ oferta }) {
           {/* Cabecera superior: logo + referencia */}
           <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              {empresa.logo_path && (
-                <img src={empresa.logo_path} alt={empresa.nombre_comercial} className="h-12 w-auto object-contain" />
-              )}
-              {!empresa.logo_path && (
+              {(empresa.logo_oscuro || empresa.logo_path) ? (
+                <img
+                  src={empresa.logo_oscuro || empresa.logo_path}
+                  alt={empresa.nombre_comercial}
+                  className="h-32 w-auto object-contain"
+                />
+              ) : (
                 <span className="text-white font-bold text-xl">{empresa.nombre_comercial}</span>
               )}
             </div>
@@ -65,13 +68,12 @@ export default function Encabezado({ oferta }) {
         </div>
       </div>
 
-      {/* Imagen de portada del producto */}
       {producto.imagen_portada ? (
-        <div className="w-full h-72 md:h-96 overflow-hidden">
+        <div className="w-full bg-white flex items-center justify-center py-12">
           <img
             src={producto.imagen_portada}
             alt={producto.nombre}
-            className="w-full h-full object-cover"
+            className="max-h-[500px] max-w-md object-contain drop-shadow-lg"
           />
         </div>
       ) : (

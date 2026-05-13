@@ -32,10 +32,16 @@ export default function NavBar({ oferta }) {
     }`}>
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
 
-        {/* Logo / Nombre empresa */}
+        {/* Logo / Nombre empresa — alterna versión clara/oscura según el fondo del navbar */}
         <div className="flex items-center gap-3">
-          {oferta.empresa.logo_path && (
-            <img src={oferta.empresa.logo_path} alt="Logo" className="h-8 w-auto object-contain" />
+          {(oferta.empresa.logo_claro || oferta.empresa.logo_path) && (
+            <img
+              src={scrolled
+                ? (oferta.empresa.logo_claro || oferta.empresa.logo_path)
+                : (oferta.empresa.logo_oscuro || oferta.empresa.logo_path)}
+              alt="Logo"
+              className="h-11 w-auto object-contain"
+            />
           )}
           <span className={`font-bold text-sm hidden sm:block ${scrolled ? 'text-navy' : 'text-white'}`}>
             {oferta.numero_oferta}

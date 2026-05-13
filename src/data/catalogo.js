@@ -162,7 +162,9 @@ export const EMPRESA = {
   nombre_comercial: "EMG Prensas",        // visible al cliente
   razon_social:     "CMH Automación S.L.", // legal, footer/condiciones
   web: "https://cmhautomacion.com/",
-  logo_path: "/logo.png",
+  logo_path:   "/logo-emg-claro.png",   // default, fondos claros
+  logo_claro:  "/logo-emg-claro.png",   // EMG en negro
+  logo_oscuro: "/logo-emg-oscuro.png",  // EMG en blanco para fondos oscuros
 }
 
 // Datos del comercial responsable
