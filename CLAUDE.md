@@ -111,17 +111,27 @@ plata:        '#9CA3AF'
 - Botón flotante de contacto
 - Panel de administración de 4 pasos para crear ofertas
 - Catálogo de productos en src/data/catalogo.js con datos CMH/EMG
-- Netlify Functions: get-oferta, crear-oferta, track-event
+- Netlify Functions: get-oferta, crear-oferta, track-event, get-ofertas, eliminar-oferta
 - Rutas: /o/:token (oferta), /admin (panel), /o/demo (demo con mock data)
 - Supabase configurado: tablas `ofertas` + `eventos_trazabilidad` creadas ✅
-- Variables de entorno añadidas en Netlify ✅
+- Variables de entorno añadidas en Netlify ✅ (incluyendo VITE_ para frontend)
 - GitHub conectado a Netlify ✅
 - Deploy Netlify estable ✅
 - Bundler de Netlify Functions configurado a esbuild ✅
 - Claves Supabase rotadas al nuevo formato publishable / secret ✅
 - **Flujo end-to-end probado en producción**: /admin → Supabase → /o/<token> ✅
-- Trazabilidad de eventos funcionando ✅
 - **Rebrand visual completo**: paleta grafito/rojo/plata, logos dual, demo con producto real 2HR ✅
+- **PDF adjunto a ofertas**: Juliana sube PDF en paso Revisión → Supabase Storage bucket `ofertas-pdf` → botón rojo descarga en hero ✅
+- **Trazabilidad completa activada**: track-event.js persiste en Supabase, 8 tipos de eventos tracked ✅
+  - `oferta_abierta`, `seccion_vista`, `tiempo_total`, `pdf_descargado`
+  - `btn_agendar`, `btn_whatsapp`, `btn_email`, `solucion_expandida`
+  - `oferta_aceptada`, `oferta_rechazada` (con motivo)
+- **Dashboard de seguimiento en /admin → pestaña "Seguimiento"** ✅
+  - Estadísticas globales (enviadas / abiertas / aceptadas / rechazadas)
+  - Tarjeta por oferta con chips de actividad (veces abierta, tiempo, PDF, acciones)
+  - Secciones visitadas por el cliente visibles de un vistazo
+  - Timeline expandible con todos los eventos y timestamps
+  - Botón eliminar oferta con confirmación inline
 
 ### ⏳ Pendiente (bloqueado por contenido externo)
 - URL de Calendly de Juliana (la creará ella)
@@ -133,29 +143,26 @@ plata:        '#9CA3AF'
 - Modelos .glb por producto optimizados (<10 MB cada uno)
 
 ### ⏳ Features técnicas pendientes (sin dependencia externa)
-- **Descarga PDF**: botón que genere PDF con producto + accesorios + totales + condiciones
-- **Tabla de potencia en Descripcion**: tabla fuerza-palanca → fuerza-prensa (ya disponible en `docs/referencia-oferta-original/oferta-2HR.md`)
-- **Selector de comercial en /admin**: Juliana o Maxime al crear oferta
+- **Tabla de potencia en Descripcion**: tabla fuerza-palanca → fuerza-prensa (datos en `docs/referencia-oferta-original/oferta-2HR.md`)
 - **Templates de condiciones**: "Exportación UE" y "Exportación fuera UE" además del "Estándar España"
-- **Dashboard de trazabilidad**: historial de ofertas + comportamiento del cliente en /admin (Fase 2)
 - **Autenticación en /admin** (Fase 2 — opcional mientras URL sea discreta)
 
 ### ⏳ Operacional / handoff
 - Librería de prompts en `prompts/` para que Juliana/Maxime gestionen el catálogo sin dev
-- Plantilla de email comercial (texto/HTML para enviar el link de la oferta al cliente)
+- Plantilla de email comercial (texto para enviar el link de la oferta al cliente) — baja prioridad
 - `CLAUDE.md` final con instrucciones de handoff completas
 - Backup periódico de Supabase (tablas `ofertas` y `eventos_trazabilidad`)
 
 ### 🔮 Fase 2 (futuro)
-- Dashboard de trazabilidad completo
 - Historial y versiones de oferta en /admin
 - Envío de email automatizado desde el panel
 - Soporte multiidioma (francés/inglés para exportación)
+- Autenticación para /admin
 
 ## Orden recomendado de próximas sesiones
-1. **Cuando llegue el Excel**: migración del catálogo (Bloque B, alto valor)
-2. **Feature descarga PDF** (Bloque C — diferenciador comercial)
-3. **Dashboard de trazabilidad** (Bloque C — lo pedirá Maxime)
+1. **Cuando llegue el Excel**: migración del catálogo completo (Bloque B, alto valor)
+2. **Templates de condiciones** Exportación UE/fuera UE (Bloque C, rápido)
+3. **Tabla de potencia 2HR** en componente Descripcion (Bloque C, rápido)
 4. **Librería de prompts + handoff** (Bloque D)
 
 ## Estructura de ficheros clave
