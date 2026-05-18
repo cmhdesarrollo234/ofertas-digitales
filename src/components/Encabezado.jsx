@@ -7,7 +7,7 @@ function diasRestantes(fechaStr) {
 }
 
 export default function Encabezado({ oferta }) {
-  const { cliente, producto, empresa, numero_oferta, fecha_creacion, fecha_expiracion } = oferta
+  const { cliente, producto, empresa, numero_oferta, fecha_creacion, fecha_expiracion, pdf_url } = oferta
 
   return (
     <div className="pt-14"> {/* padding-top para compensar el navbar fijo */}
@@ -65,6 +65,27 @@ export default function Encabezado({ oferta }) {
               Oferta válida hasta el <span className="text-white font-semibold">{fecha_expiracion}</span>
             </p>
           </div>
+
+          {/* Botón descarga PDF — visible solo si hay PDF adjunto */}
+          {pdf_url && (
+            <div className="mt-8">
+              <a
+                href={pdf_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-naranja hover:bg-naranja-dark
+                           text-white font-bold px-7 py-4 rounded-xl transition-colors
+                           text-base shadow-lg shadow-black/20"
+              >
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Descargar oferta en PDF
+              </a>
+              <p className="text-white/40 text-xs mt-2 ml-1">Versión descargable e imprimible de esta oferta</p>
+            </div>
+          )}
         </div>
       </div>
 

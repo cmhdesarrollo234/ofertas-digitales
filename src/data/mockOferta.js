@@ -137,6 +137,10 @@ export const mockOferta = {
     calendly_url: "https://calendly.com/demo",
   },
 
+  // ── PDF adjunto ────────────────────────────────────────────────────────
+  // null = sin PDF (demo). En ofertas reales, Supabase Storage URL.
+  pdf_url: null,
+
   // ── Identidad de la empresa ─────────────────────────────────────────────
   empresa: {
     nombre_comercial: "EMG Prensas",

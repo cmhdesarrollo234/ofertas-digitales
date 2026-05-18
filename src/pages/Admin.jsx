@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { CATALOGO, CONDICIONES_PLANTILLAS, EMPRESA, COMERCIAL } from '../data/catalogo.js'
+import { supabase } from '../lib/supabaseClient.js'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PANEL DE ADMINISTRACIÓN — Crear nueva oferta
@@ -37,6 +38,12 @@ export default function Admin() {
   const [descripcionPersonalizada, setDescripcionPersonalizada] = useState('')
   const [condicionesId, setCondicionesId] = useState(CONDICIONES_PLANTILLAS[0]?.id || '')
 
+  // PDF adjunto (opcional)
+  const [pdfFile, setPdfFile]       = useState(null)
+  const [pdfUrl, setPdfUrl]         = useState(null)
+  const [subiendoPdf, setSubiendoPdf] = useState(false)
+  const [errorPdf, setErrorPdf]     = useState(null)
+
   const producto = CATALOGO.find(p => p.id === productoId)
   const condiciones = CONDICIONES_PLANTILLAS.find(c => c.id === condicionesId)
 
@@ -47,6 +54,36 @@ export default function Admin() {
     !!condicionesId,
     true,
   ]
+
+  // ── Subir PDF a Supabase Storage ─────────────────────────────────────────
+  async function handleSubirPdf(file) {
+    if (!file) return
+    setPdfFile(file)
+    setSubiendoPdf(true)
+    setErrorPdf(null)
+    try {
+      const ext = file.name.split('.').pop()
+      const nombreArchivo = `ofertas/${Date.now()}-${Math.random().toString(36).substr(2, 6)}.${ext}`
+
+      const { data, error: uploadError } = await supabase.storage
+        .from('ofertas-pdf')
+        .upload(nombreArchivo, file, { contentType: 'application/pdf', upsert: false })
+
+      if (uploadError) throw uploadError
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('ofertas-pdf')
+        .getPublicUrl(data.path)
+
+      setPdfUrl(publicUrl)
+    } catch (err) {
+      console.error('[Admin] Error subiendo PDF:', err)
+      setErrorPdf('No se pudo subir el PDF. Comprueba la conexión e inténtalo de nuevo.')
+      setPdfFile(null)
+    } finally {
+      setSubiendoPdf(false)
+    }
+  }
 
   // ── Construir el objeto oferta ───────────────────────────────────────────
   function construirOferta() {
@@ -68,6 +105,7 @@ export default function Admin() {
       condiciones,
       comercial: COMERCIAL,
       empresa: EMPRESA,
+      pdf_url: pdfUrl || null,
     }
   }
 
@@ -89,8 +127,8 @@ export default function Admin() {
       setError(err.message)
     } finally {
       setCargando(false)
+    }
   }
-}
 
   // ── URL generada con éxito ───────────────────────────────────────────────
   if (urlGenerada) {
@@ -127,12 +165,26 @@ export default function Admin() {
             Vista previa de la oferta →
           </a>
 
+          {pdfUrl && (
+            <a href={pdfUrl} target="_blank" rel="noopener noreferrer"
+               className="block w-full border border-gray-200 text-gray-500 text-sm py-2.5 px-6 rounded-xl
+                          hover:bg-gray-50 transition-colors mb-4 flex items-center justify-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Verificar PDF adjunto
+            </a>
+          )}
+
           <button
             onClick={() => {
               setUrlGenerada(null)
               setPaso(0)
               setCliente({ nombre_empresa: '', nombre_contacto: '', cargo: '', email: '' })
               setDescripcionPersonalizada('')
+              setPdfFile(null)
+              setPdfUrl(null)
             }}
             className="text-gray-400 hover:text-gray-600 text-sm underline underline-offset-4"
           >
@@ -351,7 +403,7 @@ export default function Admin() {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-extrabold text-navy mb-1">Revisión final</h2>
-              <p className="text-gray-500 text-sm">Comprueba los datos antes de generar el enlace.</p>
+              <p className="text-gray-500 text-sm">Comprueba los datos y adjunta el PDF antes de generar el enlace.</p>
             </div>
 
             {[
@@ -397,6 +449,90 @@ export default function Admin() {
               </div>
             ))}
 
+            {/* ── PDF adjunto (opcional) ─────────────────────────────────── */}
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="bg-gray-50 px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-navy text-sm">PDF de la oferta</p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    El cliente verá un botón de descarga destacado al abrir la oferta
+                  </p>
+                </div>
+                <span className="text-xs bg-gray-100 text-gray-400 px-2 py-1 rounded-full">Opcional</span>
+              </div>
+
+              <div className="p-5">
+                {!pdfUrl ? (
+                  <div>
+                    <label className="block cursor-pointer group">
+                      <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors
+                        ${subiendoPdf
+                          ? 'border-navy/30 bg-azul-light/50'
+                          : 'border-gray-200 hover:border-navy/30 hover:bg-gray-50'
+                        }`}>
+                        {subiendoPdf ? (
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="w-8 h-8 border-2 border-navy/20 border-t-navy rounded-full animate-spin" />
+                            <p className="text-sm text-gray-500">Subiendo PDF...</p>
+                          </div>
+                        ) : (
+                          <>
+                            <svg className="w-10 h-10 text-gray-300 mx-auto mb-3 group-hover:text-navy/40 transition-colors"
+                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                                d="M12 16v-6m0 0l-3 3m3-3l3 3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                            </svg>
+                            <p className="text-sm font-medium text-gray-600">Haz clic para adjuntar el PDF</p>
+                            <p className="text-xs text-gray-400 mt-1">La oferta clásica que ya tenías en Word/PDF</p>
+                          </>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        className="hidden"
+                        onChange={e => handleSubirPdf(e.target.files[0])}
+                        disabled={subiendoPdf}
+                      />
+                    </label>
+
+                    {errorPdf && (
+                      <div className="mt-3 flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+                        <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {errorPdf}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* PDF subido con éxito */
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <svg className="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-navy">PDF adjuntado correctamente</p>
+                      <p className="text-xs text-gray-400 truncate mt-0.5">{pdfFile?.name}</p>
+                    </div>
+                    <button
+                      onClick={() => { setPdfUrl(null); setPdfFile(null) }}
+                      className="flex-shrink-0 text-gray-300 hover:text-red-400 transition-colors p-1"
+                      title="Quitar PDF"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
                 Error al generar la oferta: {error}
@@ -432,14 +568,23 @@ export default function Admin() {
           ) : (
             <button
               onClick={handleGenerar}
-              disabled={cargando}
-              className="flex-1 py-3 px-6 rounded-xl font-bold text-sm bg-green-600
-                         hover:bg-green-700 text-white transition-colors flex items-center justify-center gap-2"
+              disabled={cargando || subiendoPdf}
+              className={`flex-1 py-3 px-6 rounded-xl font-bold text-sm transition-colors
+                          flex items-center justify-center gap-2 ${
+                subiendoPdf
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700 text-white'
+              }`}
             >
               {cargando ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Generando...
+                </>
+              ) : subiendoPdf ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-500 rounded-full animate-spin" />
+                  Esperando subida del PDF...
                 </>
               ) : (
                 <>
