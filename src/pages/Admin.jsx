@@ -632,7 +632,7 @@ export default function Admin() {
           )}
         </div>
       </div>
-      </div></> /* fin vista === 'nueva' */}
+      </>}
     </div>
   )
 }
