@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CATALOGO, CONDICIONES_PLANTILLAS, EMPRESA, COMERCIAL } from '../data/catalogo.js'
 import { supabase } from '../lib/supabaseClient.js'
+import AdminDashboard from '../components/AdminDashboard.jsx'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PANEL DE ADMINISTRACIÓN — Crear nueva oferta
@@ -22,6 +23,7 @@ function calcularFechaExpiracion(dias) {
 }
 
 export default function Admin() {
+  const [vista, setVista] = useState('nueva') // 'nueva' | 'dashboard'
   const [paso, setPaso] = useState(0)
   const [cargando, setCargando] = useState(false)
   const [urlGenerada, setUrlGenerada] = useState(null)
@@ -202,13 +204,44 @@ export default function Admin() {
       <div className="bg-navy text-white px-6 py-4 flex items-center justify-between">
         <div>
           <p className="text-white/60 text-xs uppercase tracking-widest">Panel interno</p>
-          <h1 className="font-bold text-lg">Nueva oferta comercial</h1>
+          <h1 className="font-bold text-lg">
+            {vista === 'nueva' ? 'Nueva oferta comercial' : 'Seguimiento de ofertas'}
+          </h1>
         </div>
         <span className="text-white/60 text-sm">{EMPRESA.nombre}</span>
       </div>
 
-      {/* Barra de pasos */}
-      <div className="bg-white border-b border-gray-200 px-6 py-3">
+      {/* Tabs de navegación */}
+      <div className="bg-white border-b border-gray-200 px-6">
+        <div className="max-w-4xl mx-auto flex gap-0">
+          <button
+            onClick={() => setVista('nueva')}
+            className={`px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
+              vista === 'nueva'
+                ? 'border-navy text-navy'
+                : 'border-transparent text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            + Nueva oferta
+          </button>
+          <button
+            onClick={() => setVista('dashboard')}
+            className={`px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
+              vista === 'dashboard'
+                ? 'border-navy text-navy'
+                : 'border-transparent text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            📊 Seguimiento
+          </button>
+        </div>
+      </div>
+
+      {/* Vista: Dashboard */}
+      {vista === 'dashboard' && <AdminDashboard />}
+
+      {/* Vista: Nueva oferta — barra de pasos + formulario */}
+      {vista === 'nueva' && <><div className="bg-white border-b border-gray-200 px-6 py-3">
         <div className="max-w-2xl mx-auto flex items-center gap-2">
           {PASOS.map((nombre, i) => (
             <div key={i} className="flex items-center gap-2 flex-1">
@@ -599,6 +632,7 @@ export default function Admin() {
           )}
         </div>
       </div>
+      </div></> /* fin vista === 'nueva' */}
     </div>
   )
 }

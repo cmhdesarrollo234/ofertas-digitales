@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { mockOferta } from '../data/mockOferta.js'
+import { trackEvent, trackBeacon } from '../lib/tracker.js'
 
 import NavBar            from '../components/NavBar.jsx'
 import Encabezado        from '../components/Encabezado.jsx'
@@ -23,20 +24,20 @@ import ContactoFlotante  from '../components/ContactoFlotante.jsx'
 
 export default function OfertaPage() {
   const { token } = useParams()
-  const [oferta, setOferta] = useState(null)
-  const [estado, setEstado] = useState('cargando') // cargando | ok | error | expirada
+  const [oferta, setOferta]   = useState(null)
+  const [estado, setEstado]   = useState('cargando')
+  const ofertaIdRef           = useRef(null)
 
+  // ── Carga de datos ───────────────────────────────────────────────────────
   useEffect(() => {
     if (!token) { setEstado('error'); return }
 
-    // Modo demo: carga datos mock
     if (token === 'demo') {
       setOferta(mockOferta)
       setEstado('ok')
       return
     }
 
-    // Modo real: llama al backend
     fetch(`/api/get-oferta?token=${token}`)
       .then(res => {
         if (res.status === 404) { setEstado('expirada'); return null }
@@ -49,14 +50,58 @@ export default function OfertaPage() {
       .catch(() => setEstado('error'))
   }, [token])
 
-  // ── Registrar apertura ───────────────────────────────────────────────────
+  // ── Evento: oferta abierta + guardar id para el resto de eventos ─────────
   useEffect(() => {
     if (estado !== 'ok' || !oferta) return
-    fetch('/api/track-event', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ oferta_id: oferta.id || token, tipo_evento: 'oferta_abierta' }),
-    }).catch(() => {}) // Silenciar errores de tracking
+    const id = oferta.id || token
+    ofertaIdRef.current = id
+    trackEvent(id, 'oferta_abierta')
+  }, [estado, oferta, token])
+
+  // ── Evento: tiempo total (se envía al salir de la página) ────────────────
+  useEffect(() => {
+    if (estado !== 'ok' || !oferta) return
+    const inicio = Date.now()
+    const id = oferta.id || token
+
+    const handleUnload = () => {
+      const segundos = Math.round((Date.now() - inicio) / 1000)
+      if (segundos < 3) return // Ignorar rebotes instantáneos
+      trackBeacon(id, 'tiempo_total', { segundos })
+    }
+
+    window.addEventListener('beforeunload', handleUnload)
+    return () => window.removeEventListener('beforeunload', handleUnload)
+  }, [estado, oferta, token])
+
+  // ── Evento: secciones visitadas (Intersection Observer) ─────────────────
+  useEffect(() => {
+    if (estado !== 'ok' || !oferta) return
+    const id = oferta.id || token
+    const vistas = new Set()
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          const seccion = entry.target.id
+          if (entry.isIntersecting && seccion && !vistas.has(seccion)) {
+            vistas.add(seccion)
+            trackEvent(id, 'seccion_vista', { seccion })
+          }
+        })
+      },
+      { threshold: 0.35 }
+    )
+
+    // Pequeño delay para que el DOM esté completamente montado
+    const timer = setTimeout(() => {
+      document.querySelectorAll('section[id]').forEach(s => observer.observe(s))
+    }, 500)
+
+    return () => {
+      clearTimeout(timer)
+      observer.disconnect()
+    }
   }, [estado, oferta, token])
 
   // ── Estados de carga ─────────────────────────────────────────────────────
@@ -82,7 +127,7 @@ export default function OfertaPage() {
           <p className="text-gray-500 mb-6">
             El período de validez de esta oferta ha finalizado. Contacta con nosotros para solicitar una actualización.
           </p>
-          <a href="mailto:comercial@vuempresa.com"
+          <a href="mailto:comercial@emg-prensas.es"
              className="inline-block bg-navy text-white font-bold py-3 px-8 rounded-xl hover:bg-navy-dark transition-colors">
             Solicitar nueva oferta
           </a>
@@ -107,13 +152,19 @@ export default function OfertaPage() {
     )
   }
 
-  // ── Oferta cargada: mismo render que App.jsx ─────────────────────────────
+  // ── Oferta cargada ───────────────────────────────────────────────────────
+  const ofertaId = oferta.id || token
+
   return (
     <div className="min-h-screen bg-white">
       <NavBar oferta={oferta} />
       <main>
-        <section id="inicio"><Encabezado oferta={oferta} /></section>
-        <section id="descripcion"><Descripcion producto={oferta.producto} /></section>
+        <section id="inicio">
+          <Encabezado oferta={oferta} ofertaId={ofertaId} />
+        </section>
+        <section id="descripcion">
+          <Descripcion producto={oferta.producto} />
+        </section>
         {oferta.producto?.video_youtube_id && oferta.producto.video_youtube_id !== 'SUSTITUIR_ID_YOUTUBE' && (
           <section id="video">
             <VideoYoutube videoId={oferta.producto.video_youtube_id} />
@@ -131,7 +182,10 @@ export default function OfertaPage() {
           />
         </section>
         <section id="soluciones">
-          <SolucionesCalidad soluciones={oferta.soluciones_calidad} />
+          <SolucionesCalidad
+            soluciones={oferta.soluciones_calidad}
+            ofertaId={ofertaId}
+          />
         </section>
         <section id="resumen">
           <ResumenEconomico
@@ -144,11 +198,11 @@ export default function OfertaPage() {
           <Condiciones condiciones={oferta.condiciones} validez={oferta.fecha_expiracion} />
         </section>
         <section id="accion">
-          <AccionesFinales comercial={oferta.comercial} ofertaId={oferta.id || token} />
+          <AccionesFinales comercial={oferta.comercial} ofertaId={ofertaId} />
         </section>
       </main>
       <footer className="bg-gray-900 text-gray-400 py-8 text-center text-sm">
-        <p className="font-semibold text-white mb-1">{oferta.empresa?.nombre}</p>
+        <p className="font-semibold text-white mb-1">{oferta.empresa?.nombre_comercial}</p>
         <p>{oferta.empresa?.web}</p>
         <p className="mt-3 text-xs text-gray-600">
           Oferta {oferta.numero_oferta} · Documento confidencial · Válido hasta {oferta.fecha_expiracion}

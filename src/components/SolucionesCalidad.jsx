@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { trackEvent } from '../lib/tracker.js'
 
 function formatEur(n) {
   return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(n)
 }
 
-function CardSolucion({ sol, index }) {
+function CardSolucion({ sol, index, ofertaId }) {
   const [videoAbierto, setVideoAbierto] = useState(false)
 
   const colores = [
@@ -13,6 +14,13 @@ function CardSolucion({ sol, index }) {
     { bg: 'bg-green-50',  borde: 'border-green-200',  num: 'bg-green-700 text-white' },
   ]
   const c = colores[index % colores.length]
+
+  const handleVideo = () => {
+    if (!videoAbierto) {
+      trackEvent(ofertaId, 'solucion_expandida', { nombre: sol.nombre })
+    }
+    setVideoAbierto(!videoAbierto)
+  }
 
   return (
     <div className={`rounded-2xl border-2 ${c.borde} ${c.bg} p-6 flex flex-col gap-4`}>
@@ -41,7 +49,7 @@ function CardSolucion({ sol, index }) {
       {sol.video_youtube_id && (
         <>
           <button
-            onClick={() => setVideoAbierto(!videoAbierto)}
+            onClick={handleVideo}
             className="flex items-center gap-2 text-azul hover:text-navy text-sm font-semibold transition-colors"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -68,7 +76,7 @@ function CardSolucion({ sol, index }) {
   )
 }
 
-export default function SolucionesCalidad({ soluciones }) {
+export default function SolucionesCalidad({ soluciones, ofertaId }) {
   if (!soluciones || soluciones.length === 0) return null
 
   return (
@@ -90,7 +98,7 @@ export default function SolucionesCalidad({ soluciones }) {
           'md:grid-cols-3'
         }`}>
           {soluciones.map((sol, i) => (
-            <CardSolucion key={i} sol={sol} index={i} />
+            <CardSolucion key={i} sol={sol} index={i} ofertaId={ofertaId} />
           ))}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { trackEvent } from '../lib/tracker.js'
 
 function diasRestantes(fechaStr) {
   // fechaStr esperado en formato "DD de mes de AAAA"
@@ -6,7 +7,7 @@ function diasRestantes(fechaStr) {
   return null // Se puede mejorar con una fecha real en ISO
 }
 
-export default function Encabezado({ oferta }) {
+export default function Encabezado({ oferta, ofertaId }) {
   const { cliente, producto, empresa, numero_oferta, fecha_creacion, fecha_expiracion, pdf_url } = oferta
 
   return (
@@ -73,6 +74,7 @@ export default function Encabezado({ oferta }) {
                 href={pdf_url}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent(ofertaId, 'pdf_descargado')}
                 className="inline-flex items-center gap-3 bg-naranja hover:bg-naranja-dark
                            text-white font-bold px-7 py-4 rounded-xl transition-colors
                            text-base shadow-lg shadow-black/20"
