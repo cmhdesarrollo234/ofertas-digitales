@@ -105,10 +105,30 @@ function procesarOferta(oferta) {
 // ── Componente principal ──────────────────────────────────────────────────────
 
 export default function AdminDashboard() {
-  const [ofertas, setOfertas]     = useState([])
-  const [cargando, setCargando]   = useState(true)
-  const [error, setError]         = useState(null)
-  const [expandida, setExpandida] = useState(null)
+  const [ofertas, setOfertas]           = useState([])
+  const [cargando, setCargando]         = useState(true)
+  const [error, setError]               = useState(null)
+  const [expandida, setExpandida]       = useState(null)
+  const [eliminando, setEliminando]     = useState(null) // token en proceso
+  const [confirmando, setConfirmando]   = useState(null) // token pendiente de confirmar
+
+  async function handleEliminar(token) {
+    setEliminando(token)
+    setConfirmando(null)
+    try {
+      const res = await fetch('/api/eliminar-oferta', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      })
+      if (!res.ok) throw new Error('Error del servidor')
+      setOfertas(prev => prev.filter(o => o.token !== token))
+    } catch (err) {
+      alert('No se pudo eliminar la oferta. Inténtalo de nuevo.')
+    } finally {
+      setEliminando(null)
+    }
+  }
 
   useEffect(() => {
     fetch('/api/get-ofertas')
@@ -193,6 +213,11 @@ export default function AdminDashboard() {
               oferta={oferta}
               expandida={expandida === oferta.id}
               onToggle={() => setExpandida(expandida === oferta.id ? null : oferta.id)}
+              confirmando={confirmando === oferta.token}
+              eliminando={eliminando === oferta.token}
+              onPedirConfirmacion={() => setConfirmando(oferta.token)}
+              onCancelarConfirmacion={() => setConfirmando(null)}
+              onConfirmarEliminar={() => handleEliminar(oferta.token)}
             />
           ))}
         </div>
@@ -203,7 +228,7 @@ export default function AdminDashboard() {
 
 // ── Tarjeta de oferta ─────────────────────────────────────────────────────────
 
-function OfertaCard({ oferta, expandida, onToggle }) {
+function OfertaCard({ oferta, expandida, onToggle, confirmando, eliminando, onPedirConfirmacion, onCancelarConfirmacion, onConfirmarEliminar }) {
   const { resumen } = oferta
 
   const badgeEstado = resumen.accionFinal === 'aceptada'  ? { text: 'Aceptada',  cls: 'bg-green-100 text-green-700' }
@@ -313,29 +338,69 @@ function OfertaCard({ oferta, expandida, onToggle }) {
             </div>
           )}
 
-          {/* Enlace a la oferta */}
-          <div className="mt-4 pt-3 border-t border-gray-200 flex items-center gap-3">
-            <a
-              href={`/o/${oferta.token}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-navy hover:underline font-medium"
-            >
-              Abrir oferta →
-            </a>
-            {oferta.pdf_url && (
+          {/* Enlace a la oferta + eliminar */}
+          <div className="mt-4 pt-3 border-t border-gray-200">
+            <div className="flex items-center gap-3">
               <a
-                href={oferta.pdf_url}
+                href={`/o/${oferta.token}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-gray-400 hover:underline"
+                className="text-xs text-navy hover:underline font-medium"
               >
-                Ver PDF adjunto
+                Abrir oferta →
               </a>
+              {oferta.pdf_url && (
+                <a
+                  href={oferta.pdf_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-gray-400 hover:underline"
+                >
+                  Ver PDF adjunto
+                </a>
+              )}
+              <span className="text-xs text-gray-300 ml-auto">
+                Expira: {new Date(oferta.fecha_expiracion).toLocaleDateString('es-ES')}
+              </span>
+              {!confirmando && (
+                <button
+                  onClick={onPedirConfirmacion}
+                  className="text-gray-300 hover:text-red-400 transition-colors ml-2"
+                  title="Eliminar oferta"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              )}
+            </div>
+
+            {/* Confirmación de borrado */}
+            {confirmando && (
+              <div className="mt-3 flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-xs text-red-700 flex-1">
+                  ¿Eliminar esta oferta y todos sus eventos? Esta acción no se puede deshacer.
+                </p>
+                <button
+                  onClick={onConfirmarEliminar}
+                  disabled={eliminando}
+                  className="text-xs bg-red-500 hover:bg-red-600 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {eliminando ? 'Eliminando...' : 'Sí, eliminar'}
+                </button>
+                <button
+                  onClick={onCancelarConfirmacion}
+                  className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1.5"
+                >
+                  Cancelar
+                </button>
+              </div>
             )}
-            <span className="text-xs text-gray-300 ml-auto">
-              Expira: {new Date(oferta.fecha_expiracion).toLocaleDateString('es-ES')}
-            </span>
           </div>
         </div>
       )}
